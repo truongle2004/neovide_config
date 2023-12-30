@@ -1,0 +1,414 @@
+"  _   ____  __  _  _________  ___  _______  __  _________  ___  _______ 
+" | | / / / / / / |/ / ___/ / / \ \/ / __/ |/ / / ___/ __ \/ _ \/ __/ _ \
+" | |/ / /_/ / /    / (_ / /_/ / \  / _//    / / /__/ /_/ / // / _// , _/
+" |___/\____/ /_/|_/\___/\____/  /_/___/_/|_/  \___/\____/____/___/_/|_|
+" Vim customized by Vu Nguyen Coder
+" (See my detailed tutorial here: https://youtu.be/Tp8i1EHsQ1Q )
+"
+" http://youtube.com/VuNguyenCoder
+" http://facebook.com/VuNguyenCoder
+
+lua print('Neovim started...')
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set mouse=a                 " Enable mouse
+set expandtab               " Tab setting 
+set tabstop=4               " Tab setting 
+set shiftwidth=4            " Tab setting
+set listchars=tab:\¦\       " Tab charactor 
+set smarttab
+set list
+set foldmethod=syntax         
+set foldnestmax=1
+set foldlevelstart=3        "  
+set number                  " Show line number
+set ignorecase              " Enable case-sensitive 
+" Disable backup
+set nobackup
+set nowb
+set noswapfile
+
+
+set shell=powershell.exe
+set shellxquote=
+let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command '
+let &shellquote   = ''
+let &shellpipe    = '| Out-File -Encoding UTF8 %s'
+let &shellredir   = '| Out-File -Encoding UTF8 %s'
+hi Normal guibg=NONE ctermbg=NONE
+
+
+
+
+" Optimize 
+set synmaxcol=3000    "Prevent breaking syntax hightlight when string too long. Max = 3000"
+set lazyredraw
+au! BufNewFile,BufRead *.json set foldmethod=indent " Change foldmethod for specific filetype
+
+syntax on
+
+" Enable copying from vim to clipboard
+if has('win32')
+  set clipboard=unnamed  
+else
+  set clipboard=unnamedplus
+endif
+
+
+
+
+
+" Auto reload content changed outside
+au CursorHold,CursorHoldI * checktime
+au FocusGained,BufEnter * :checktime
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
+    \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == ''
+      \ | checktime 
+    \ | endif
+autocmd FileChangedShellPost *
+    \ echohl WarningMsg 
+    \ | echo "File changed on disk. Buffer reloaded."
+    \ | echohl None
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Key mappings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" Resize pane
+nmap <M-Right> :vertical resize +1<CR>    
+nmap <M-Left> :vertical resize -1<CR>
+nmap <M-Down> :resize +1<CR>
+nmap <M-Up> :resize -1<CR>
+
+" Search a hightlighted text
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+nmap /\ :noh<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugin list
+" (used with Vim-plug - https://github.com/junegunn/vim-plug)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call plug#begin(stdpath('config').'/plugged')
+" Theme
+  Plug 'joshdick/onedark.vim',                  " Dark theme
+
+"visiable
+Plug 'https://github.com/xiyaowong/transparent.nvim'
+
+" File browser
+  Plug 'preservim/nerdTree'                     " File browser  
+  Plug 'Xuyuanp/nerdtree-git-plugin'            " Git status
+  Plug 'ryanoasis/vim-devicons'                 " Icon
+  Plug 'unkiwii/vim-nerdtree-sync'              " Sync current file 
+  Plug 'jcharum/vim-nerdtree-syntax-highlight',
+    \ {'branch': 'escape-keys'}
+
+" optimize lsp
+Plug 'hinell/lsp-timeout.nvim'
+" auto save
+Plug 'Pocco81/auto-save.nvim'
+
+
+" File search
+  Plug 'junegunn/fzf', 
+    \ { 'do': { -> fzf#install() } }            " Fuzzy finder 
+  Plug 'junegunn/fzf.vim'
+
+" Status bar
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+
+" Terminal
+  Plug 'voldikss/vim-floaterm'                  " Float terminal
+
+" Code intellisense
+  Plug 'neoclide/coc.nvim', 
+    \ {'branch': 'release'}                     " Language server protocol (LSP) 
+  Plug 'jiangmiao/auto-pairs'                   " Parenthesis auto 
+  Plug 'alvan/vim-closetag'
+  Plug 'mattn/emmet-vim' 
+  Plug 'preservim/nerdcommenter'                " Comment code 
+  " Plug 'liuchengxu/vista.vim'                   " Function tag bar
+  Plug 'alvan/vim-closetag'                     " Auto close HTML/XML tag 
+    \ { 
+      \ 'do': 'yarn install '
+              \ .'--frozen-lockfile '
+              \ .'&& yarn build',
+      \ 'branch': 'main' 
+    \ }
+
+Plug 'easymotion/vim-easymotion'
+" find file
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.5' }
+" or                                , { 'branch': '0.1.x' }
+
+
+"Auto complete
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" Code syntax highlight
+  Plug 'yuezk/vim-js'                           " Javascript
+  Plug 'MaxMEllon/vim-jsx-pretty'               " JSX/React
+  " Plug 'jackguo380/vim-lsp-cxx-highlight'       " C/C++
+  " Plug 'uiiaoo/java-syntax.vim'                 " Java
+  Plug 'sheerun/vim-polyglot'
+  
+" Debugging
+  Plug 'puremourning/vimspector'                " Vimspector
+
+" Source code version control 
+  Plug 'tpope/vim-fugitive'                     " Git infomation 
+  Plug 'tpope/vim-rhubarb' 
+  Plug 'airblade/vim-gitgutter'                 " Git show changes 
+  Plug 'samoshkin/vim-mergetool'                " Git merge
+
+" Fold 
+  Plug 'tmhedberg/SimpylFold'
+"barbar
+Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
+Plug 'nvim-tree/nvim-web-devicons' " OPTIONAL: for file icons
+Plug 'romgrk/barbar.nvim'
+call plug#end()
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugin Setting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set theme 
+colorscheme onedark
+
+" Overwrite some color highlight 
+if (has("autocmd"))
+  augroup colorextend
+    autocmd ColorScheme 
+      \ * call onedark#extend_highlight("Comment",{"fg": {"gui": "#728083"}})
+    autocmd ColorScheme 
+      \ * call onedark#extend_highlight("LineNr", {"fg": {"gui": "#728083"}})
+  augroup END
+endif
+
+" Disable automatic comment in newline
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
+
+command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
+vmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Close buffer without exitting vim 
+nnoremap <silent> <leader>bd :bp \| sp \| bn \| bd<CR>
+" copy past
+nnoremap <C-c> "+y
+vnoremap <C-c> "+y
+nnoremap <C-v> "+p
+inoremap <C-v> <C-r>+
+
+
+" NerdTree keymap
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <leader>m :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
+
+"new terminal
+nnoremap <silent> <leader>to    :FloatermNew<CR>
+tnoremap <silent> <leader>to    <C-\><C-n>:FloatermNew<CR>
+
+map <Leader> <Plug>(easymotion-prefix) "easy-motion
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+
+" Move to line
+map <Leader>l <Plug>(easymotion-bd-jk)
+nmap <Leader>l <Plug>(easymotion-overwin-line)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+
+" Move to previous/next
+nnoremap <silent>    <A-,> <Cmd>BufferPrevious<CR>
+nnoremap <silent>    <A-.> <Cmd>BufferNext<CR>
+
+" Re-order to previous/next
+nnoremap <silent>    <A-<> <Cmd>BufferMovePrevious<CR>
+nnoremap <silent>    <A->> <Cmd>BufferMoveNext<CR>
+
+" Goto buffer in position...
+nnoremap <silent>    <A-1> <Cmd>BufferGoto 1<CR>
+nnoremap <silent>    <A-2> <Cmd>BufferGoto 2<CR>
+nnoremap <silent>    <A-3> <Cmd>BufferGoto 3<CR>
+nnoremap <silent>    <A-4> <Cmd>BufferGoto 4<CR>
+nnoremap <silent>    <A-5> <Cmd>BufferGoto 5<CR>
+nnoremap <silent>    <A-6> <Cmd>BufferGoto 6<CR>
+nnoremap <silent>    <A-7> <Cmd>BufferGoto 7<CR>
+nnoremap <silent>    <A-8> <Cmd>BufferGoto 8<CR>
+nnoremap <silent>    <A-9> <Cmd>BufferGoto 9<CR>
+nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
+
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+" Pin/unpin buffer
+nnoremap <silent>    <A-p> <Cmd>BufferPin<CR>
+
+" Close buffer
+nnoremap <silent>    <C-w-w> <Cmd>BufferClose<CR>
+" Restore buffer
+nnoremap <silent>    <C-s-t> <Cmd>BufferRestore<CR>
+
+" Scroll up
+nnoremap <C-k> <C-u>
+inoremap <C-k> <C-u>
+cnoremap <C-k> <C-u>
+vnoremap <C-k> <C-u>
+
+" Scroll down
+nnoremap <C-j> <C-d>
+inoremap <C-j> <C-d>
+cnoremap <C-j> <C-d>
+vnoremap <C-j> <C-d>
+
+
+" Assuming you're using CoC (Conqueror of Completion)
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+
+
+" Prettier
+command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
+
+" neovide transparent
+let g:neovide_transparency=0.8
+
+
+
+lua <<EOF
+  -- Set up nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    window = {
+      -- completion = cmp.config.window.bordered(),
+      -- documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Set up lspconfig.
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  require('lspconfig').tsserver.setup {
+    capabilities = capabilities
+  }
+
+
+require("transparent").setup({ -- Optional, you don't have to run setup.
+  groups = { -- table: default groups
+    'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
+    'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
+    'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
+    'SignColumn', 'CursorLine', 'CursorLineNr', 'StatusLine', 'StatusLineNC',
+    'EndOfBuffer',
+  },
+  extra_groups = {}, -- table: additional groups that should be cleared
+  exclude_groups = {}, -- table: groups you don't want to clear
+}) 
+  
+
+EOF
+
+
+lua require('plugins')
+
+" Other setting
+for setting_file in split(glob(stdpath('config').'/settings/*.vim'))
+  execute 'source' setting_file
+endfor
+
+
