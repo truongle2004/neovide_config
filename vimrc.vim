@@ -154,6 +154,8 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 
+
+
 " Code syntax highlight
   Plug 'yuezk/vim-js'                           " Javascript
   Plug 'MaxMEllon/vim-jsx-pretty'               " JSX/React
@@ -176,6 +178,14 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
 Plug 'nvim-tree/nvim-web-devicons' " OPTIONAL: for file icons
 Plug 'romgrk/barbar.nvim'
+
+
+"lsp language install 
+Plug 'williamboman/nvim-lsp-installer'
+
+" highlight
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} 
+
 call plug#end()
 
 
@@ -315,6 +325,8 @@ command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
 " neovide transparent
 let g:neovide_transparency=0.8
 
+"add config tailwind css
+  au FileType html let b:coc_root_patterns = ['.git', '.env', 'tailwind.config.js', 'tailwind.config.cjs']
 
 
 lua <<EOF
@@ -400,6 +412,12 @@ require("transparent").setup({ -- Optional, you don't have to run setup.
   exclude_groups = {}, -- table: groups you don't want to clear
 }) 
   
+
+require("nvim-lsp-installer").setup {}
+
+local lspconfig = require('lspconfig')
+
+
 
 EOF
 
