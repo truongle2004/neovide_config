@@ -41,6 +41,8 @@ hi Normal guibg=NONE ctermbg=NONE
 
 
 
+" git status
+set statusline+=%{get(b:,'gitsigns_status','')}
 
 " Optimize 
 set synmaxcol=3000    "Prevent breaking syntax hightlight when string too long. Max = 3000"
@@ -185,6 +187,10 @@ Plug 'williamboman/nvim-lsp-installer'
 
 " highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} 
+
+"git status
+Plug 'lewis6991/gitsigns.nvim'
+
 
 call plug#end()
 
