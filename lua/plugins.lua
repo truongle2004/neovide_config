@@ -3,6 +3,8 @@ vim.cmd [[packadd packer.nvim]]
 return require('packer').startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
+    -- blankline coding 
+    use "lukas-reineke/indent-blankline.nvim"
    
 --     use {
 --   "pmizio/typescript-tools.nvim",

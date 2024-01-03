@@ -29,6 +29,9 @@ set ignorecase              " Enable case-sensitive
 set nobackup
 set nowb
 set noswapfile
+" center of the window
+set scrolloff=999
+set sidescrolloff=999
 
 
 set shell=powershell.exe
@@ -94,7 +97,7 @@ nmap /\ :noh<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin(stdpath('config').'/plugged')
 " Theme
-  Plug 'joshdick/onedark.vim',                  " Dark theme
+Plug 'joshdick/onedark.vim',                  " Dark theme
 
 "visiable
 Plug 'https://github.com/xiyaowong/transparent.nvim'
@@ -120,7 +123,8 @@ Plug 'Pocco81/auto-save.nvim'
 
 " Status bar
   Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+ Plug 'vim-airline/vim-airline-themes'
+
 
 " Terminal
   Plug 'voldikss/vim-floaterm'                  " Float terminal
@@ -200,6 +204,7 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set theme 
 colorscheme onedark
+
 
 " Overwrite some color highlight 
 if (has("autocmd"))
