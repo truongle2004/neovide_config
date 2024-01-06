@@ -44,6 +44,8 @@ hi Normal guibg=NONE ctermbg=NONE
 
 
 
+
+
 " git status
 set statusline+=%{get(b:,'gitsigns_status','')}
 
@@ -98,6 +100,9 @@ nmap /\ :noh<CR>
 call plug#begin(stdpath('config').'/plugged')
 " Theme
 Plug 'joshdick/onedark.vim',                  " Dark theme
+" tokyo theme
+Plug 'folke/tokyonight.nvim'
+
 
 "visiable
 Plug 'https://github.com/xiyaowong/transparent.nvim'
@@ -114,6 +119,10 @@ Plug 'https://github.com/xiyaowong/transparent.nvim'
 Plug 'hinell/lsp-timeout.nvim'
 " auto save
 Plug 'Pocco81/auto-save.nvim'
+
+" show cmdline
+Plug 'MunifTanjim/nui.nvim'
+Plug 'VonHeikemen/fine-cmdline.nvim'
 
 
 " File search
@@ -196,6 +205,9 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'lewis6991/gitsigns.nvim'
 
 
+
+
+
 call plug#end()
 
 
@@ -203,7 +215,13 @@ call plug#end()
 " => Plugin Setting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set theme 
-colorscheme onedark
+" colorscheme onedark
+colorscheme tokyonight
+
+" tokyo scheme cofiguration
+let g:tokyonight_style = "storm"  " Change the style (night, storm, day)
+let g:tokyonight_italic_functions = 1  " Enable italic for functions
+let g:tokyonight_italic_keywords = 1   " Enable italic for keywords
 
 
 " Overwrite some color highlight 
@@ -215,6 +233,11 @@ if (has("autocmd"))
       \ * call onedark#extend_highlight("LineNr", {"fg": {"gui": "#728083"}})
   augroup END
 endif
+
+
+" show cmdline
+nnoremap : <cmd>FineCmdline<CR>
+
 
 " Disable automatic comment in newline
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -228,8 +251,8 @@ nmap <leader>f  <Plug>(coc-format-selected)
 " Close buffer without exitting vim 
 nnoremap <silent> <leader>bd :bp \| sp \| bn \| bd<CR>
 " copy past
-nnoremap <C-c> "+y
-vnoremap <C-c> "+y
+" nnoremap <C-c> "+y
+" vnoremap <C-c> "+y
 nnoremap <C-v> "+p
 inoremap <C-v> <C-r>+
 
@@ -237,14 +260,29 @@ inoremap <C-v> <C-r>+
 " NerdTree keymap
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <leader>m :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+" nnoremap <C-t> :NERDTreeToggle<CR>
+" nnoremap <C-f> :NERDTreeFind<CR>
 
 "new terminal
 nnoremap <silent> <leader>to    :FloatermNew<CR>
 tnoremap <silent> <leader>to    <C-\><C-n>:FloatermNew<CR>
 
-map <Leader> <Plug>(easymotion-prefix) "easy-motion
+" avoid lsp notion trouble
+augroup EasyMotionExclusion
+  autocmd!
+  autocmd BufEnter,BufWinEnter * if &buftype !=# 'lspinfo' | call SetupEasyMotion() | endif
+augroup END
+
+function! SetupEasyMotion()
+  " Your EasyMotion setup here
+  nmap <leader><leader> <Plug>(easymotion-prefix)
+  " Add any other mappings you need for EasyMotion
+endfunction
+
+
+"easy-motion
+
+map <Leader> <Plug>(easymotion-prefix) 
 map  <Leader>f <Plug>(easymotion-bd-f)
 nmap <Leader>f <Plug>(easymotion-overwin-f)
 
@@ -257,7 +295,11 @@ nmap <Leader>l <Plug>(easymotion-overwin-line)
 
 " Move to word
 map  <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>w <Plug>(easymotion-overwin-w)
+" nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+" auto reload folder 
+command! -nargs=1 ReloadFolder :e <args>
+
 
 " Use <c-space> to trigger completion
 if has('nvim')
@@ -312,22 +354,41 @@ nnoremap <silent>    <C-w-w> <Cmd>BufferClose<CR>
 " Restore buffer
 nnoremap <silent>    <C-s-t> <Cmd>BufferRestore<CR>
 
-" Scroll up
+" Scroll up faster
 nnoremap <C-k> <C-u>
 inoremap <C-k> <C-u>
 cnoremap <C-k> <C-u>
 vnoremap <C-k> <C-u>
 
-" Scroll down
+" Scroll down faster
 nnoremap <C-j> <C-d>
 inoremap <C-j> <C-d>
 cnoremap <C-j> <C-d>
 vnoremap <C-j> <C-d>
 
 
+" Enable NERDTree Git
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+      \ "Modified"  : "",
+      \ "Staged"    : "✓",
+      \ "Untracked" : "",
+      \ "Renamed"   : "➜",
+      \ "Unmerged"  : "═",
+      \ "Deleted"   : "",
+      \ "Dirty"     : "",
+      \ "Clean"     : "✓",
+      \ "Unknown"   : ""
+      \ }
+
 " Assuming you're using CoC (Conqueror of Completion)
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+
+" Enable compe and configure key mappings
+inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+
 
 
 " Prettier
@@ -341,40 +402,13 @@ let g:neovide_transparency=0.8
 
 
 lua <<EOF
-  -- Set up nvim-cmp.
-  local cmp = require'cmp'
-
-  cmp.setup({
-    snippet = {
-      -- REQUIRED - you must specify a snippet engine
-      expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-      end,
-    },
-    window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
-    },
-    mapping = cmp.mapping.preset.insert({
-      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    }),
-    sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
-      -- { name = 'luasnip' }, -- For luasnip users.
-      -- { name = 'ultisnips' }, -- For ultisnips users.
-      -- { name = 'snippy' }, -- For snippy users.
-    }, {
-      { name = 'buffer' },
-    })
-  })
+ -- Set up completion-nvim.
+local cmp = require('cmp')
+cmp.setup({
+  sources = {
+    { name = 'nvim_lsp' },
+  },
+})
 
   -- Set configuration for specific filetype.
   cmp.setup.filetype('gitcommit', {
@@ -403,12 +437,25 @@ lua <<EOF
     })
   })
 
-  -- Set up lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities()
-  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig').tsserver.setup {
-    capabilities = capabilities
-  }
+-- Set up cmp_nvim_lsp.
+local capabilities = require('cmp_nvim_lsp').setup()
+
+
+-- Set up lspconfig for tsserver.
+require('lspconfig').tsserver.setup{
+  capabilities = capabilities,
+  -- other configuration...
+}
+
+-- Set up lspconfig for HTML.
+require('lspconfig').html.setup {
+  capabilities = capabilities,
+}
+
+-- Set up lspconfig for CSS.
+require('lspconfig').cssls.setup {
+  capabilities = capabilities,
+}
 
 
 require("transparent").setup({ -- Optional, you don't have to run setup.
@@ -427,7 +474,6 @@ require("transparent").setup({ -- Optional, you don't have to run setup.
 require("nvim-lsp-installer").setup {}
 
 local lspconfig = require('lspconfig')
-
 
 
 EOF
