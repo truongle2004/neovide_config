@@ -169,7 +169,8 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 
-
+" Install the Eclipse JDT Language Server
+" Plug 'josephwilk/nvim-jdtls'
 
 " Code syntax highlight
   Plug 'yuezk/vim-js'                           " Javascript
@@ -203,7 +204,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "git status
 Plug 'lewis6991/gitsigns.nvim'
-
 
 
 
@@ -391,6 +391,17 @@ inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 
 
+" Set up lspconfig for Clangd
+if executable('clangd')
+  au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd']},
+        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+        \ })
+endif
+
+
+
 " Prettier
 command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
 
@@ -446,6 +457,10 @@ require('lspconfig').tsserver.setup{
   capabilities = capabilities,
   -- other configuration...
 }
+-- set up lspconfig for java
+-- require('lspconfig').jdtls.setup {
+--    capabilities = capabilities,
+--  }
 
 -- Set up lspconfig for HTML.
 require('lspconfig').html.setup {
@@ -457,6 +472,10 @@ require('lspconfig').cssls.setup {
   capabilities = capabilities,
 }
 
+-- set up lspconfig for c++
+require('lspconfig').clangd.setup{
+  capabilities = capabilities,
+}
 
 require("transparent").setup({ -- Optional, you don't have to run setup.
   groups = { -- table: default groups
