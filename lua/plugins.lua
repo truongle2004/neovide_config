@@ -6,7 +6,12 @@ return require('packer').startup(function(use)
     
     -- lsp color
     use 'folke/lsp-colors.nvim'
+
+    -- symbols outline
+    use 'simrat39/symbols-outline.nvim'
     -- color and icon for trouble notion
+
+
     
     use {
       "folke/lsp-trouble.nvim",

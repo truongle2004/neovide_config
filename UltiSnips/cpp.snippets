@@ -1,0 +1,23 @@
+snippet ctemplate
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+using namespace std;
+#define fastio ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define all(x) x.begin(),x.end()
+#pragma GCC optimize("O2")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+void solve() {
+    ${1: // code}
+}
+int main() {
+    // #ifndef ONLINE_JUDGE
+    // freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
+    // #endif
+    solve();
+    fastio;
+    return 0;
+}
+endsnippet

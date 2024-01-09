@@ -124,6 +124,10 @@ Plug 'Pocco81/auto-save.nvim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'VonHeikemen/fine-cmdline.nvim'
 
+"create snippets
+Plug 'SirVer/ultisnips'
+
+
 
 " File search
   Plug 'junegunn/fzf', 
@@ -175,8 +179,8 @@ Plug 'hrsh7th/nvim-cmp'
 " Code syntax highlight
   Plug 'yuezk/vim-js'                           " Javascript
   Plug 'MaxMEllon/vim-jsx-pretty'               " JSX/React
-  " Plug 'jackguo380/vim-lsp-cxx-highlight'       " C/C++
-  " Plug 'uiiaoo/java-syntax.vim'                 " Java
+  Plug 'jackguo380/vim-lsp-cxx-highlight'       " C/C++
+  Plug 'uiiaoo/java-syntax.vim'                 " Java
   Plug 'sheerun/vim-polyglot'
   
 " Debugging
@@ -367,6 +371,14 @@ cnoremap <C-j> <C-d>
 vnoremap <C-j> <C-d>
 
 
+" Enable UltiSnips
+let g:UltiSnipsEnableSnipMate = 1
+let g:UltiSnipsSnippetDirectories = ['UltiSnips']
+
+" C++ snippets trigger configuration
+au FileType cpp let b:UltiSnipsExpandTrigger="<tab>"
+
+
 " Enable NERDTree Git
 let g:NERDTreeGitStatusIndicatorMapCustom = {
       \ "Modified"  : "",
@@ -389,6 +401,13 @@ inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 
+" move line 
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-2<CR>==gi
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
 
 
 " Set up lspconfig for Clangd
@@ -399,6 +418,8 @@ if executable('clangd')
         \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
         \ })
 endif
+
+
 
 
 
@@ -493,6 +514,7 @@ require("transparent").setup({ -- Optional, you don't have to run setup.
 require("nvim-lsp-installer").setup {}
 
 local lspconfig = require('lspconfig')
+
 
 
 EOF

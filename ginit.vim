@@ -6,7 +6,7 @@
 " Set format of tab name 
 set guitablabel=\[%N\]\ %t\ %M 
 
-set guifont=Cascadia\ Code
+set guifont=CascadiaCode\ NF
 
 set mouse=a
 
